@@ -1,0 +1,243 @@
+[
+ {
+  "id": "U01",
+  "categoria": "umbral",
+  "pregunta": "¿Qué PSI del puntaje indica estabilidad en validación y cuándo se escala el hallazgo?",
+  "secciones_esperadas": [
+   "Umbrales de estabilidad del puntaje",
+   "Umbrales de referencia para pruebas de validación"
+  ],
+  "respuesta_referencia": "PSI menor a 0,10 indica estabilidad; de 0,10 a 0,25 se investiga y se refuerza el seguimiento; por encima de 0,25 se escala el hallazgo. Se calcula por deciles del puntaje."
+ },
+ {
+  "id": "U02",
+  "categoria": "umbral",
+  "pregunta": "¿Qué VIF se considera aceptable en modelos clásicos?",
+  "secciones_esperadas": [
+   "5. Eliminar redundancia",
+   "Umbrales de referencia para selección"
+  ],
+  "respuesta_referencia": "VIF de hasta 5 es aceptable; entre 5 y 10 requiere revisión; por encima de 10 sugiere excluir o transformar la variable."
+ },
+ {
+  "id": "U03",
+  "categoria": "umbral",
+  "pregunta": "¿Qué límites de correlación se usan para considerar redundantes dos variables?",
+  "secciones_esperadas": [
+   "5. Eliminar redundancia",
+   "Umbrales de referencia para selección"
+  ],
+  "respuesta_referencia": "Se usan como referencia 0,60 de correlación en modelos clásicos y 0,85 en aprendizaje automático."
+ },
+ {
+  "id": "U04",
+  "categoria": "umbral",
+  "pregunta": "¿Con qué porcentaje de faltantes se descarta una variable candidata?",
+  "secciones_esperadas": [
+   "2. Aplicar el filtro univariado",
+   "Umbrales de calidad antes",
+   "Umbrales de referencia para selección"
+  ],
+  "respuesta_referencia": "En el filtro univariado se descarta con más de 75% de faltantes; en el perfil preliminar la referencia es menos de 85% de faltantes."
+ },
+ {
+  "id": "U05",
+  "categoria": "umbral",
+  "pregunta": "¿Qué rango de Gini se espera para un modelo en construcción sobre la población total con un evento específico?",
+  "secciones_esperadas": [
+   "Cortes para evaluación del desempeño",
+   "Rangos ilustrativos de Gini"
+  ],
+  "respuesta_referencia": "Entre 40% y 50% (construcción, población total, evento específico)."
+ },
+ {
+  "id": "U06",
+  "categoria": "umbral",
+  "pregunta": "¿Cada cuánto debe validarse un modelo de criticidad alta y cuánto dura la revisión?",
+  "secciones_esperadas": [
+   "Frecuencia de revisión por criticidad"
+  ],
+  "respuesta_referencia": "Intervalo máximo de 12 meses desde la evaluación anterior; duración de referencia de 26 días hábiles la inicial y 19 la periódica."
+ },
+ {
+  "id": "U07",
+  "categoria": "umbral",
+  "pregunta": "¿Qué nivel de coincidencia se exige al certificar la implementación?",
+  "secciones_esperadas": [
+   "Umbrales de certificación",
+   "Coincidencia en la certificación"
+  ],
+  "respuesta_referencia": "Al menos 99% de coincidencia entre la ejecución de referencia y la operativa, con precisión numérica de hasta 7 decimales; por debajo se documenta causa, impacto y corrección."
+ },
+ {
+  "id": "U08",
+  "categoria": "umbral",
+  "pregunta": "¿Qué proporción de casos indeterminados es razonable al construir el objetivo?",
+  "secciones_esperadas": [
+   "Cortes ilustrativos para construir y revisar el objetivo",
+   "Umbrales de referencia para selección"
+  ],
+  "respuesta_referencia": "Una proporción de indeterminados no mayor al 15% es una referencia orientativa, ajustable a la definición del evento y la ventana."
+ },
+ {
+  "id": "U09",
+  "categoria": "umbral",
+  "pregunta": "¿Cuándo conviene desarrollar un modelo separado para una subpoblación?",
+  "secciones_esperadas": [
+   "Referencias para partición y segmentación"
+  ],
+  "respuesta_referencia": "Si la subpoblación supera el 20% del total y la diferencia de tasas supera 6 puntos porcentuales, comprobando eventos y beneficio. En carteras de bajo default se comparan diferencia y razón de tasas con intervalos, con suficientes eventos y verificando mejora fuera de tiempo; con tablas escasas, prueba exacta de Fisher."
+ },
+ {
+  "id": "U10",
+  "categoria": "umbral",
+  "pregunta": "¿Cuáles son los cortes para validar faltantes en variables finalistas y en la PD?",
+  "secciones_esperadas": [
+   "Cortes para validar la calidad de datos",
+   "Umbrales de referencia para pruebas de validación"
+  ],
+  "respuesta_referencia": "Máximo de referencia de 5% en variables finalistas, banda óptima 0–3%; exceder el umbral en 3–5% requiere revisión y más de 5% es crítico. En predicciones clave como la PD se exige 0% de faltantes."
+ },
+ {
+  "id": "C01",
+  "categoria": "procedimiento",
+  "pregunta": "¿Cuáles son los pasos para validar la calidad de datos de un modelo?",
+  "secciones_esperadas": [
+   "Procedimiento detallado para validar la calidad de datos"
+  ],
+  "respuesta_referencia": "Reproducir la extracción, revisar integridad y completitud, replicar variables y resultados, contrastar la estabilidad (PSI por deciles) y documentar y repetir las pruebas."
+ },
+ {
+  "id": "C02",
+  "categoria": "concepto",
+  "pregunta": "¿Cómo se obtiene una cota de Pluto–Tasche para un grado sin incumplimientos?",
+  "secciones_esperadas": [
+   "2. Estimar la PD de grados con cero o pocos eventos"
+  ],
+  "respuesta_referencia": "Se ordenan los grados, se agrupa el grado con los de peor calidad y se invierte la cola inferior binomial para obtener una cota superior unilateral. Con 1 000 obligados sin incumplimientos y 95%, la cota es 1 − 0,05^(1/1000), cerca de 0,30%."
+ },
+ {
+  "id": "C03",
+  "categoria": "concepto",
+  "pregunta": "¿Cómo se corrige el intercepto de una logística después de balancear las clases?",
+  "secciones_esperadas": [
+   "5. Recalibrar después de balancear clases"
+  ],
+  "respuesta_referencia": "Se suma logit(prevalencia objetivo) − logit(prevalencia de entrenamiento); pasar de 50% a 0,5% implica un desplazamiento de aproximadamente −5,293. Luego se verifica la calibración en datos representativos."
+ },
+ {
+  "id": "C04",
+  "categoria": "concepto",
+  "pregunta": "¿Cómo se usa el intervalo de Jeffreys para validar la PD de un grado?",
+  "secciones_esperadas": [
+   "2. Aplicar la prueba binomial y el intervalo de Jeffreys"
+  ],
+  "respuesta_referencia": "Se calculan cuantiles de Beta(d + 0,5, n − d + 0,5) como contraste descriptivo, indicando si es central o unilateral y cómo se tratan d = 0 y d = n, y se compara con la PD asignada junto con la prueba binomial."
+ },
+ {
+  "id": "C05",
+  "categoria": "concepto",
+  "pregunta": "¿Qué métricas de desempeño se deben reportar en carteras con pocos incumplimientos?",
+  "secciones_esperadas": [
+   "Métricas para carteras con pocos incumplimientos"
+  ],
+  "respuesta_referencia": "AP o PR-AUC con línea base igual a la prevalencia y AP − π como mejora, precisión y recall al corte, lift acumulado, y número de eventos con intervalos; con cero incumplimientos no se evalúa la detección."
+ },
+ {
+  "id": "C06",
+  "categoria": "concepto",
+  "pregunta": "¿Qué hago si cambio la selección de variables después de mirar la muestra fuera de tiempo?",
+  "secciones_esperadas": [
+   "7. Confirmar y documentar la selección"
+  ],
+  "respuesta_referencia": "Reservar un período adicional para verificar el modelo resultante."
+ },
+ {
+  "id": "C07",
+  "categoria": "concepto",
+  "pregunta": "¿Cuántos incumplimientos por parámetro recomienda la guía para una regresión logística?",
+  "secciones_esperadas": [
+   "1. Preparar el inventario"
+  ],
+  "respuesta_referencia": "Entre 10 y 20 incumplimientos de entrenamiento por parámetro candidato; con 250 eventos equivale a 12–25 parámetros y con 175 en entrenamiento a 8–17."
+ },
+ {
+  "id": "C08",
+  "categoria": "concepto",
+  "pregunta": "¿Quién debe realizar la validación de un modelo?",
+  "secciones_esperadas": [
+   "Alcance e independencia"
+  ],
+  "respuesta_referencia": "Personas con independencia funcional respecto del desarrollo y del uso; el desarrollador entrega evidencia reproducible y el validador hace sus propias comprobaciones."
+ },
+ {
+  "id": "M01",
+  "categoria": "multi_hop",
+  "pregunta": "Mi modelo tiene una variable con VIF de 7 y otra con PSI de 0,22. ¿Qué dice la guía de cada caso?",
+  "secciones_esperadas": [
+   "5. Eliminar redundancia",
+   "2. Aplicar el filtro univariado"
+  ],
+  "respuesta_referencia": "Un VIF entre 5 y 10 requiere revisión. Un PSI de variable mayor a 0,20 es un corte de exclusión salvo justificación técnica."
+ },
+ {
+  "id": "M02",
+  "categoria": "multi_hop",
+  "pregunta": "¿Cómo se estima la tendencia central de la PD y cómo se contrasta después con un modelo de un factor?",
+  "secciones_esperadas": [
+   "3. Estimar la tendencia central",
+   "3. Incorporar dependencia con un modelo de un factor"
+  ],
+  "respuesta_referencia": "Con tasas anuales de un año sobre una serie que incluya períodos favorables y adversos, documentando la ponderación. Luego se usa un modelo tipo Vasicek que condiciona la PD al factor común y la correlación, obtiene una distribución predictiva del conteo y bandas, justificando la correlación y probando valores alternativos."
+ },
+ {
+  "id": "M03",
+  "categoria": "multi_hop",
+  "pregunta": "¿En qué se diferencian los cortes de faltantes de la guía de desarrollo y los de la guía de validación?",
+  "secciones_esperadas": [
+   "Umbrales de calidad antes",
+   "Cortes para validar la calidad de datos"
+  ],
+  "respuesta_referencia": "Desarrollo: menos de 85% de faltantes en el perfil preliminar y exclusión con más de 75% en el filtro univariado, aplicado a candidatas. Validación: máximo de referencia de 5% en variables finalistas (óptimo 0–3%) y 0% en predicciones clave."
+ },
+ {
+  "id": "D01",
+  "categoria": "contradiccion",
+  "pregunta": "¿El corte de PSI para actuar es 0,20 o 0,25?",
+  "secciones_esperadas": [
+   "Umbrales de estabilidad del puntaje",
+   "Estabilidad de población y filtros"
+  ],
+  "respuesta_referencia": "Depende del objeto: para el puntaje en validación, más de 0,25 amerita escalar; para población, filtros, variables y PD en operación, la guía de desarrollo usa 0,20 como corte."
+ },
+ {
+  "id": "D02",
+  "categoria": "contradiccion",
+  "pregunta": "¿Qué tamaño mínimo debe tener cada tramo al agrupar una variable?",
+  "secciones_esperadas": [
+   "4. Agrupar intervalos"
+  ],
+  "respuesta_referencia": "Como ejemplo, 3% de la muestra con un solo corte y 8% con más de dos, con 3 puntos porcentuales de separación. En bajo default se sustituye la separación por evidencia relativa e intervalos, y el tamaño depende también del número de eventos."
+ },
+ {
+  "id": "F01",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Qué LGD regulatoria se usa para hipotecas en Basilea?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren la LGD regulatoria."
+ },
+ {
+  "id": "F02",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Cómo se valida un modelo de LGD con datos de recuperación?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren la validación de LGD."
+ },
+ {
+  "id": "F03",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Qué tasa de interés debería cobrar a un crédito hipotecario nuevo?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Fuera del alcance de las guías."
+ }
+]

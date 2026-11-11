@@ -1,0 +1,6 @@
+data/
+*venv*/
+.env
+mortgage-low-default-pd-model/docs/
+mortgage-low-default-pd-model
+__pycache__/
