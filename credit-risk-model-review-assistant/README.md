@@ -136,3 +136,7 @@ Python, OpenAI (`gpt-6-luna`, `gpt-6-astra` y `text-embedding-3-small`), LangCha
 - **Reglas que chocan.** La de aclarar cuándo un valor es orientativo y la del verificador estricto convirtieron una respuesta correcta en dudosa.
 - **Un solo usuario.** El índice vive en memoria y el estado en archivos. Para varios usuarios haría falta una base vectorial, un almacén de estado compartido y una arquitectura con despachador y trabajadores.
 - **Envío a terceros.** Las consultas y los fragmentos se envían a OpenAI, y a LangSmith si se activa `usar_langsmith`.
+
+## Agradecimientos
+
+Gracias a [hlopezo](https://github.com/hlopezo) por compartir las guías de desarrollo y validación de modelos que forman la base de conocimiento de este asistente.
