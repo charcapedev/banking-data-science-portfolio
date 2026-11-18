@@ -1,0 +1,65 @@
+[
+ {
+  "id": "F04",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Cómo se estima la EAD de una línea de crédito revolvente con factores de conversión?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren la estimación de EAD ni los factores de conversión."
+ },
+ {
+  "id": "F05",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Con qué criterios se asigna un crédito a la etapa 2 de NIIF 9 para calcular provisiones?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren NIIF 9 ni el cálculo de provisiones."
+ },
+ {
+  "id": "F06",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Qué escenarios macroeconómicos deben usarse en las pruebas de estrés de la cartera de consumo?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren pruebas de estrés."
+ },
+ {
+  "id": "F07",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Qué variables se recomiendan para un modelo de detección de fraude con tarjetas?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren modelos de fraude."
+ },
+ {
+  "id": "F08",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Cómo se calcula el requerimiento de capital por riesgo de crédito con el método IRB?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren el cálculo de capital regulatorio."
+ },
+ {
+  "id": "F09",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Qué método de inferencia de rechazados conviene usar al construir un scorecard de admisión?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren la inferencia de rechazados."
+ },
+ {
+  "id": "F10",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Qué margen sobre la pérdida esperada debe incluir la tasa de un préstamo de consumo?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren la fijación de precios ni la pérdida esperada."
+ },
+ {
+  "id": "F11",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Qué controles de prevención de lavado de activos debe tener la originación de créditos?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren la prevención de lavado de activos."
+ },
+ {
+  "id": "F12",
+  "categoria": "fuera_de_corpus",
+  "pregunta": "¿Cómo se construye un modelo de cobranza para priorizar la gestión de clientes en mora?",
+  "secciones_esperadas": [],
+  "respuesta_referencia": "Las guías no cubren modelos de cobranza."
+ }
+]

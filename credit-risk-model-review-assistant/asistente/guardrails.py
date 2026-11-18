@@ -78,9 +78,42 @@ def validar_citas(respuesta, n_fragmentos):
                for n in re.findall(r'\d+', grupo)}
     if not citadas:
         problemas.append('El texto de la respuesta no incluye citas [n].')
-    elif max(citadas) > n_fragmentos:
+    elif max(citadas) > n_fragmentos or min(citadas) < 1:
         problemas.append('El texto cita un fragmento que no existe.')
     return problemas
+
+
+CITA = re.compile(r'\[(\d+(?:\s*[,;]\s*\d+)*)\]')
+NUMERO = re.compile(r'(?<![\w.,])(\d+(?:[.,]\d+)?)(?![\w])')
+MARCADOR_LISTA = re.compile(r'^\s*(?:\d+[.)]|[-*])\s+', re.M)
+
+
+def cifras(texto):
+    """Los números de un texto como valores (0,20 y 0.20 son el mismo). Ignora citas [n] y marcadores de lista."""
+    texto = MARCADOR_LISTA.sub(' ', CITA.sub(' ', texto or ''))
+    valores = set()
+    for n in NUMERO.findall(texto):
+        try:
+            valores.add(round(float(n.replace(',', '.')), 6))
+        except ValueError:
+            pass
+    return valores
+
+
+def _respaldada(valor, permitidas):
+    # 0,20 y 20 % expresan lo mismo; se acepta cualquiera de las dos formas
+    return any(abs(valor - p) < 1e-9 or abs(valor - p * 100) < 1e-6 or abs(valor * 100 - p) < 1e-6 for p in permitidas)
+
+
+def verificar_cifras(texto, fragmentos, pregunta=''):
+    """Control determinista: toda cifra del texto que ve el usuario debe aparecer en los fragmentos que cita
+    o en la pregunta. Devuelve las cifras sin respaldo (vacío si todo cuadra)."""
+    citadas = {int(n) for grupo in CITA.findall(texto or '') for n in re.findall(r'\d+', grupo)}
+    fuentes = [fragmentos[n - 1] for n in sorted(citadas) if 1 <= n <= len(fragmentos)]
+    permitidas = cifras(pregunta)
+    for f in fuentes:
+        permitidas |= cifras(f"{f['ruta']}\n{f['texto']}")
+    return sorted(v for v in cifras(texto) if not _respaldada(v, permitidas))
 
 
 SISTEMA_VERIFICADOR = """Eres un verificador de hechos. Recibes fragmentos numerados de guías y una lista de afirmaciones.

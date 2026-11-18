@@ -6,6 +6,7 @@ import streamlit as st
 
 from asistente import Asistente, Config, MODELO_POTENTE, MODELO_RAPIDO
 from asistente.config import RUTA_DATOS, RUTA_EVALUACION
+from asistente.evaluacion import metricas_por_k
 from asistente.memoria import leer_trazas
 
 st.set_page_config(page_title='Consulta de guías de riesgo', page_icon='📑', layout='wide')
@@ -114,6 +115,17 @@ with evaluacion_tab:
                      width='stretch')
         st.subheader('Red teaming')
         st.dataframe(ata.drop(columns=['respuesta']), hide_index=True, width='stretch')
+        if (ruta / 'nb02_recuperacion_listas.pkl').is_file():
+            st.subheader('Cobertura de la recuperación tal como corre en producción (nb_02)')
+            listas, _ = pd.read_pickle(ruta / 'nb02_recuperacion_listas.pkl')
+            detalle = metricas_por_k(listas, asistente.indice, ks=(3, 6))
+            st.dataframe(detalle.groupby(['configuracion', 'k'], sort=False)['cobertura'].mean().unstack('k')
+                         .rename(columns=lambda k: f'Cobertura@{k}').round(3), width='stretch')
+        if (ruta / 'nb02_mutaciones.pkl').is_file():
+            st.subheader('Detección de una cifra cambiada a propósito (nb_02)')
+            mutaciones, _ = pd.read_pickle(ruta / 'nb02_mutaciones.pkl')
+            st.dataframe(mutaciones[['A: verificador', 'B: verificador', 'control de cifras']].mean()
+                         .rename('tasa de detección').round(3), width='stretch')
 
 # ------------------------------------------------------------------ observabilidad
 with trazas_tab:

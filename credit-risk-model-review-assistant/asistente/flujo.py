@@ -1,7 +1,7 @@
 """El flujo completo de una consulta.
 
 guardrail de entrada → caché semántico → router y plan → recuperación híbrida → re-ranking
-→ respuesta con citas → validación estructural → verificación de fidelidad → reflexión (con escalamiento)
+→ respuesta con citas → validación estructural → verificación de fidelidad y de cifras → reflexión (con escalamiento)
 → guardrail de salida → caché y traza
 """
 from dataclasses import dataclass, field, asdict
@@ -11,9 +11,9 @@ import uuid
 from .config import Config, RUTA_KB
 from .costos import RegistroCostos
 from .esquemas import Analisis, Respuesta
-from .guardrails import revisar_entrada, revisar_salida, validar_citas, verificar_fidelidad
+from .guardrails import revisar_entrada, revisar_salida, validar_citas, verificar_cifras, verificar_fidelidad
 from .indice import Indice
-from .ingesta import construir_fragmentos
+from .ingesta import construir_fragmentos, huella
 from .llm import embeber, estructurado
 from .memoria import CacheSemantico, registrar_traza
 from .recuperacion import recuperar
@@ -61,6 +61,8 @@ class Resultado:
     contradicciones: list = field(default_factory=list)
     fidelidad: float | None = None
     veredictos: list = field(default_factory=list)
+    cifras_sin_respaldo: list = field(default_factory=list)
+    afirmaciones: list = field(default_factory=list)
     requiere_revision_humana: bool = False
     modelo_respuesta: str = ''
     pasos: list = field(default_factory=list)
@@ -81,7 +83,8 @@ class Asistente:
         self.fragmentos = construir_fragmentos(ruta_kb, self.config.caracteres_por_fragmento)
         self.indice, self.indice_nuevo = Indice.cargar_o_construir(
             self.fragmentos, self.config.rutas['indice'], self.config.modelo_embeddings, self.registro_sesion)
-        self.cache = CacheSemantico(self.config.rutas['cache'], self.config.umbral_cache)
+        self.version_kb = huella(self.fragmentos)     # cambia si cambia cualquier texto de las guías
+        self.cache = CacheSemantico(self.config.rutas['cache'], self.config.umbral_cache, self.config.cache_mismas_cifras)
 
     # ------------------------------------------------------------------ etapas
     def _paso(self, pasos, nombre, inicio, **detalle):
@@ -127,9 +130,9 @@ class Asistente:
         # 2. Caché semántico
         t = time.time()
         vector = embeber([texto], c.modelo_embeddings, registro, 'caché: embedding de la pregunta')[0]
-        clave = f'{c.modelo_respuesta}|{sorted((filtros or {}).items())}'
+        clave = f'{self.version_kb}|{c.modelo_respuesta}|{sorted((filtros or {}).items())}'
         if usar_cache and not historial:
-            encontrado, similitud = self.cache.buscar(vector, clave)
+            encontrado, similitud = self.cache.buscar(vector, clave, texto)
             self._paso(pasos, 'caché semántico', t, acierto=encontrado is not None, similitud=round(similitud, 4))
             if encontrado:
                 guardado = encontrado['resultado']
@@ -170,16 +173,23 @@ class Asistente:
             respuesta = self._generar(pregunta_autonoma, fragmentos, modelo, esfuerzo, registro, retro, historial)
             problemas = validar_citas(respuesta, len(fragmentos))
             fidelidad, veredictos = (0.0, []) if problemas else verificar_fidelidad(respuesta, fragmentos, c, registro)
+            # Control determinista sobre el texto que verá el usuario, no sobre la lista de afirmaciones
+            sin_cifra = (verificar_cifras(respuesta.respuesta, fragmentos, pregunta_autonoma)
+                         if c.verificar_cifras and not respuesta.sin_respaldo else [])
             self._paso(pasos, 'respuesta y verificación' + (f' (reflexión {intento})' if intento else ''), t,
                        modelo=modelo, problemas_de_citas=problemas, fidelidad=round(fidelidad, 3),
-                       no_respaldadas=[v.indice for v in veredictos if v.veredicto == 'no_respaldada'])
-            if fidelidad >= c.umbral_fidelidad and not problemas:
+                       no_respaldadas=[v.indice for v in veredictos if v.veredicto == 'no_respaldada'],
+                       cifras_sin_respaldo=sin_cifra)
+            if fidelidad >= c.umbral_fidelidad and not problemas and not sin_cifra:
                 break
             if intento >= c.max_reflexiones:
                 break
             intento += 1
             fallas = problemas + [f'Afirmación {v.indice}: {v.veredicto} ({v.motivo})' for v in veredictos
                                   if v.veredicto != 'respaldada']
+            if sin_cifra:
+                fallas.append('Estas cifras no aparecen en los fragmentos que citas: '
+                              + ', '.join(f'{x:g}' for x in sin_cifra) + '. Corrígelas o elimínalas.')
             retro = '\n'.join(fallas)
             if c.escalar_si_falla:
                 modelo = c.modelo_escalamiento
@@ -194,6 +204,8 @@ class Asistente:
                        for n, f in enumerate(fragmentos, start=1)]
         res.modelo_respuesta, res.fidelidad = modelo, round(fidelidad, 3)
         res.veredictos = [v.model_dump() for v in veredictos]
+        res.cifras_sin_respaldo = sin_cifra
+        res.afirmaciones = [a.model_dump() for a in respuesta.afirmaciones]
         res.contradicciones = respuesta.contradicciones
         if not ok:
             res.estado, res.respuesta = 'bloqueada', 'La respuesta no pasó el control de salida y no se muestra.'
@@ -201,11 +213,15 @@ class Asistente:
         res.respuesta = respuesta.respuesta
         if respuesta.sin_respaldo:
             res.estado = 'sin_respaldo'
-        elif fidelidad >= c.umbral_fidelidad and not problemas:
+        elif fidelidad >= c.umbral_fidelidad and not problemas and not sin_cifra:
             res.estado = 'aprobada'
         else:
             res.estado, res.requiere_revision_humana = 'dudosa', True
-            res.alertas.append(f'Fidelidad {fidelidad:.0%}: hay afirmaciones sin respaldo. Requiere revisión humana.')
+            if sin_cifra:
+                res.alertas.append('Cifras que no aparecen en las fuentes citadas: ' + ', '.join(f'{x:g}' for x in sin_cifra)
+                                   + '. Requiere revisión humana.')
+            if fidelidad < c.umbral_fidelidad or problemas:
+                res.alertas.append(f'Fidelidad {fidelidad:.0%}: hay afirmaciones sin respaldo. Requiere revisión humana.')
 
         # 7. Caché (solo respuestas aprobadas y sin historial)
         if usar_cache and res.estado == 'aprobada' and not historial:

@@ -50,6 +50,7 @@ class Config:
     usar_expansion: bool = True
     usar_reranking: bool = True
     puntaje_minimo_rerank: int = 1    # de 0 a 3
+    caracteres_rerank: int = 1800     # texto de cada candidato que lee el re-ranking (64 de 65 fragmentos completos)
     caracteres_por_fragmento: int = 1800
 
     # Guardrails y reflexión
@@ -58,10 +59,12 @@ class Config:
     max_reflexiones: int = 1
     escalar_si_falla: bool = True     # la reflexión usa el modelo potente
     max_tokens_copiados: int = 40     # tramo textual máximo copiado de una guía
+    verificar_cifras: bool = True     # toda cifra del texto debe aparecer en los fragmentos citados o en la pregunta
 
     # Caché semántico
     usar_cache: bool = True
     umbral_cache: float = 0.93      # entre 0.844 (distinta intención) y 0.948 (misma) en las pruebas
+    cache_mismas_cifras: bool = True  # solo reutiliza si la pregunta nueva tiene las mismas cifras que la guardada
 
     # Observabilidad
     usar_langsmith: bool = False      # envía las trazas a LangSmith, otro servicio externo

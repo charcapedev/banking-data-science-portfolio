@@ -43,13 +43,13 @@ def recuperar(indice, pregunta, consultas, config, registro, filtros=None, vecto
     return Recuperado(consultas, candidatos, seleccion, puntajes, time.time() - inicio)
 
 
-def rerank(indice, pregunta, ids, config, registro):
+def rerank(indice, pregunta, ids, config, registro, etapa='recuperación: re-ranking'):
     bloques = []
     for id_ in ids:
         f = indice.fragmento(id_)
-        bloques.append(f"<fragmento id=\"{id_}\">\n{f['ruta']}\n{f['texto'][:700]}\n</fragmento>")
+        bloques.append(f"<fragmento id=\"{id_}\">\n{f['ruta']}\n{f['texto'][:config.caracteres_rerank]}\n</fragmento>")
     usuario = f'Pregunta: {pregunta}\n\n' + '\n\n'.join(bloques)
     salida = estructurado(Reranking, SISTEMA_RERANK, usuario, config.modelo_reranker, config.esfuerzo_router,
-                          registro, 'recuperación: re-ranking')
+                          registro, etapa)
     validos = set(ids)
     return {p.id: p.puntaje for p in salida.puntajes if p.id in validos}
